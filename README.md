@@ -4,6 +4,7 @@ An eggdrop script that connects to the last.fm API to make last.fm-related annou
 
 # INFO
 Edited by rvzm
+
 Version: version 0.1
 
 # ISSUES
