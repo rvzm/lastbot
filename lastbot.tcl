@@ -3,13 +3,13 @@ package require tdom
 package require http
 
 # File in which irc hosts are matched with last.fm usernames
-set nickfile "/home/mike/irchosts.ini"
+set nickfile "/home/rvzm/bvzm/irchosts.ini"
 
 putlog "Welcome to lastbot!"
 
 global nicklist
 
-set last(char) "!"
+set last(char) "@"
 set last(who) "-"
 set last(key) "cb6d5c415b4e5009fcb76e86ca06f7b1"
 set last(root) "http://ws.audioscrobbler.com/2.0/?method="
@@ -164,17 +164,26 @@ proc np {nick host hand chan arg} {
     set args [split $arg]
     set tnick $nick
     set target [get_nick $nick]
-
+	putlog "lastbot:: called np"
+	putlog $target
 
     if { [llength $args] > 1 || [string match "help" [lindex $args 0]] } {
 	puthelp "privmsg $chan :Use: $last(char)np \[nick\]"
+	putlog "lastbot:: er, ya. use halp dipshit"
 	return 0
     } elseif { [llength $args] == 1} {
 	set tnick [lindex $args 0]
 	set target [get_nick [lindex $args 0]]
     }
-
-    set token [::http::geturl "$last(root)user.getRecentTracks&user=$target&limit=1&api_key=$last(key)"]
+	putlog "setting token..."
+	set url "http://ws.audioscrobbler.com/2.0/?method=user.getRecentTracks&user=$target&limit=1&api_key=$last(key)"
+	putlog "url set"
+	putlog $url
+	http::config -useragent bvzm
+    putlog "useragent set"
+	set token [::http::geturl $url]
+	putlog "lastbot:: token set:"
+	putlog $token
     upvar #0 $token state
     putlog $state(url)
 
@@ -304,14 +313,14 @@ proc urlencode {url} {
     regsub -all -- {\%} $url {%25} url
     regsub -all -- { } $url {%20} url
     regsub -all -- {\&} $url {%26} url
-    #regsub -all -- {\!} $url {%21} url
+    regsub -all -- {\!} $url {%21} url
     regsub -all -- {\@} $url {%40} url
     regsub -all -- {\#} $url {%23} url
     regsub -all -- {\$} $url {%24} url
     regsub -all -- {\^} $url {%5E} url
-    #regsub -all -- {\*} $url {%2A} url
-    #regsub -all -- {\(} $url {%28} url
-    #regsub -all -- {\)} $url {%29} url
+    regsub -all -- {\*} $url {%2A} url
+    regsub -all -- {\(} $url {%28} url
+    regsub -all -- {\)} $url {%29} url
     regsub -all -- {\+} $url {%2B} url
     regsub -all -- {\=} $url {%3D} url
     
@@ -322,13 +331,13 @@ proc urlencode {url} {
     regsub -all -- {\]} $url {%5D} url
     regsub -all -- {\{} $url {%7B} url
     regsub -all -- {\}} $url {%7D} url
-    #regsub -all -- {\.} $url {%2E} url
+    regsub -all -- {\.} $url {%2E} url
     regsub -all -- {\,} $url {%2C} url 
-    #regsub -all -- {\-} $url {%2D} url
-    #regsub -all -- {\_} $url {%5F} url
-    #regsub -all -- {\'} $url {%27} url
+    regsub -all -- {\-} $url {%2D} url
+    regsub -all -- {\_} $url {%5F} url
+    regsub -all -- {\'} $url {%27} url
     #Need : to make define:, movie: etc work 
-    #regsub -all -- {\:} $url {%3A} url
+    regsub -all -- {\:} $url {%3A} url
     regsub -all -- {\;} $url {%3B} url
     regsub -all -- {\?} $url {%3F} url
     regsub -all -- {\"} $url {%22} url
