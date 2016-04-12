@@ -176,12 +176,15 @@ proc np {nick host hand chan arg} {
 	set target [get_nick [lindex $args 0]]
     }
 	putlog "setting token..."
-	set url "http://ws.audioscrobbler.com/2.0/?method=user.getRecentTracks&user=$target&limit=1&api_key=$last(key)"
+	set url2 "http://ws.audioscrobbler.com/2.0/?method=user.getRecentTracks&user=$target&limit=1&api_key=$last(key)"
 	putlog "url set"
-	putlog $url
+	putlog $url2
 	http::config -useragent bvzm
     putlog "useragent set"
-	set token [::http::geturl $url]
+	if {[catch {set token [::http::geturl $url2]} msg]} {
+		putlog "oops: $msg"; return
+	}
+	set token [::http::geturl $url2]
 	putlog "lastbot:: token set:"
 	putlog $token
     upvar #0 $token state
